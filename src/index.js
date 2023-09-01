@@ -1,14 +1,16 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
-const patch = require("path");
+const routs = require("./routes/routes");
 
-app.use(express.static(patch.join(__dirname, "../public")));
-app.set("view engine", "ejs");
-app.set("views", "views");
-app.use("/", (req, res, next) => {
-    res.render("map");
-});
-const port = process.env.PORT || 3000;
+// middleware
+app.use(express.json());
+app.use(express.static("./src/public"));
+
+// template engine setup
+
+app.use(routs);
+const port = process.env.PORT || 4000;
 app.listen(port, () => {
     console.log(`server is running on port ${port}`);
 });
