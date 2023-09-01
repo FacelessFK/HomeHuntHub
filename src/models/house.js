@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const User = require("./user");
 const houseSchema = new mongoose.Schema({
     type: {
-        enum: ["rent", "sale"],
-        message: "{VALUE} is not supported"
+        enum: ["rent", "sale"]
+        // message: "{VALUE} is not supported"
     },
     price: {
         rent: {
@@ -22,7 +22,7 @@ const houseSchema = new mongoose.Schema({
         type: { latitude: String, longitude: String },
         required: true
     },
-    area: {
+    meterage: {
         type: Number,
         required: true
     },
@@ -41,13 +41,13 @@ const houseSchema = new mongoose.Schema({
         }
     },
     pictures: {
-        type: [Buffer]
+        type: [String]
     },
     address: {
         type: String,
         required: true
     },
-    Features: {
+    features: {
         type: [String]
     },
     description: {
