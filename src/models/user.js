@@ -35,30 +35,32 @@ const userSchema = new mongoose.Schema({
     phoneNumber: {
         type: Number,
         trim: true,
-        unique: true,
+        required: true,
         validator(value) {
             if (!validator.isMobilePhone(value))
                 throw new Error("phone number is invalid!");
         }
     },
     avatar: {
-        type: Buffer
+        type: String
     },
     role: {
-        enum: ["Admin", "User", "new"],
-        message: "{VALUE} is not supported"
+        type: String,
+        enum: {
+            values: ["Admin", "User"],
+            message: "{VALUE} is not supported"
+        },
+        default: "User"
     },
     offerHouse: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            required: true,
             ref: "House"
         }
     ],
     favHouse: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            required: true,
             ref: "House"
         }
     ]
