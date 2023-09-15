@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcrypt");
 const House = require("./house");
 const userSchema = new mongoose.Schema({
     userName: {
         type: String,
-
         required: true,
         trim: true
     },
@@ -64,6 +64,13 @@ const userSchema = new mongoose.Schema({
             ref: "House"
         }
     ]
+});
+
+userSchema.pre("save", async function (next) {
+    if (this.isModified("password")) {
+        this.password = await bcrypt.hash(this.password, 8);
+    }
+    next();
 });
 
 const User = mongoose.model("User", userSchema);
