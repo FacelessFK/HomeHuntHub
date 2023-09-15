@@ -1,6 +1,8 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const House = require("./house");
 const userSchema = new mongoose.Schema({
     userName: {
@@ -63,8 +65,37 @@ const userSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "House"
         }
+    ],
+    tokens: [
+        {
+            token: {
+                type: String,
+                required: true
+            }
+        }
     ]
 });
+userSchema.statics.findByCredentials = async (email, password) => {
+    const user = await User.findOne({ email });
+    console.log(user);
+    if (!user) {
+        throw new Error("user not found");
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) throw new Error("password is not correct");
+
+    return user;
+};
+
+userSchema.methods.generateAuthToken = async function () {
+    const token = jwt.sign({ _id: this._id.toString() }, process.env.SECRET, {
+        expiresIn: "5m"
+    });
+    console.log(token);
+    this.tokens = this.tokens.concat({ token });
+    await this.save();
+    return token;
+};
 
 userSchema.pre("save", async function (next) {
     if (this.isModified("password")) {
